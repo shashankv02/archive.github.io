@@ -44,7 +44,7 @@ href="https://fonts.googleapis.com/css?family=Inconsolata:400,700">
 
 <p>virtualenv solves these problems by creating isolated python environments for each of your projects.</p>
 
-<p>To understand how virtualenv works, we first need to understand how python searches for modules.
+<p>To understand how virtualenv works, we first need to understand how python searches for packages.
 When we import a package, python interpreter searches a list of directories under <code class="highlighter-rouge">sys.path</code> variable.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>&gt;&gt;&gt; import sys
@@ -96,7 +96,7 @@ You need to activate the environment using the activate script inside <code clas
   <li>Changes PS1 prompt to indicate the actve virtualenv.</li>
   <li>Saves current environmental variables like PATH</li>
   <li>Change PATH environment variable. bin directory inside the virtualenv is prefixed to PATH variable. So when you run python command, python interpreter in the bin folder of the virtualenv is invoked.</li>
-  <li>sys.path variable is changed to search for modules inside virtualenv first.</li>
+  <li>sys.path variable is changed to search for packages inside virtualenv first.</li>
 </ul>
 
 <p>On unix or mac, you can run <code class="highlighter-rouge">which python</code> to check which python interpreter is being used.</p>
