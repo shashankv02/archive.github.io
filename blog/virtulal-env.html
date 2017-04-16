@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    
+        <title>virtualenv</title>
+    
+
+    <meta name="description" content="Blog test">
+
+    
+
+    <link rel="icon" href="/assets/img/favicon.png">
+    <link rel="stylesheet" 
+href="https://fonts.googleapis.com/css?family=Inconsolata:400,700">
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css">
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <div class="post_wrapper">
+<div class="post">
+	<div class="post__back">
+    	<a href="/">&lt;-- home</a>
+    </div>
+    <div class="post__title">
+    	<h1>virtualenv</h1>
+    </div>
+    <div class="post__date">
+    	<p>April 13, 2017</p>
+    </div>
+    <div class="post__meta">
+    	<p></p>
+    </div>
+    <div class="post__content"?>
+        <p>Let’s talk about a must have tool in every python devoloper’s toolkit: virtualenv.</p>
+
+<p>When you install a third party package with pip, it is installed system-wide.  Sooner or later it becomes messy managing all the packages and you’ll run into issues. What would you do if you need different versions of python interpreter or a different versions of particular package for seperate projects?</p>
+
+<p>virtualenv solves these problems by creating isolated python environments for each of your projects.</p>
+
+<p>To understand how virtualenv works, we first need to understand how python searches for modules.
+When we import a package, python interpreter searches a list of directories under <code class="highlighter-rouge">sys.path</code> variable.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;&gt;&gt; import sys
+&gt;&gt;&gt; sys.path
+['', '/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python27.zip', 
+'/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7', 
+'/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/plat-mac', 
+'/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/lib-tk', 
+'/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/lib-dynload', 
+'/Library/Python/2.7/site-packages']
+</code></pre>
+</div>
+
+<p>The first element in this list is an empty string which denotes current working directory from which python interpreter is started. When you import a package in python code, python interpretor searches these list of directories linearly until a matching package is found or end of list is reached. One important directory in this list is <code class="highlighter-rouge">site-packages</code>. This is the default directory where third party packages are installed.</p>
+
+<p>Now let’s see how to use virtualenv. First install virtualenv system-wide using <code class="highlighter-rouge">pip install virtualenv</code>. You may have to use sudo if you are on mac of linux.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ pip install virtualenv
+</code></pre>
+</div>
+
+<p>Now before starting any project, create a virtual environment for it. <code class="highlighter-rouge">.virtualenvs</code> is commonly used directory name for storing the virtualenvs. It is better to seperate the actual python code of your project and the virtualenv for it. The virtualenv of the project will contain the  python interpreter and required dependencies and your project directory should contain the python code that you are going to write.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ mkdir .virtualenvs
+</code></pre>
+</div>
+
+<p>To create a new project called test, run the following command inside .virtualenv directory, <code class="highlighter-rouge">virtualenv test</code></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ virtualenv test
+New python executable in /Users/vshashank/.virtualenvs/test/bin/python
+Installing setuptools, pip, wheel...done.
+</code></pre>
+</div>
+
+<p>What virtualenv has done is it created a new directory called test. Installed python inside the test directory and installed other frequently used tools like setuptools, pip, wheel inside the test directory. You can find the python interpreter inside <code class="highlighter-rouge">bin</code> directory of the new virtualenv.</p>
+
+<p>Now how do we use the environment? 
+You need to activate the environment using the activate script inside <code class="highlighter-rouge">bin</code> directory. On windows you can find this under <code class="highlighter-rouge">Scripts</code> directory.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ . test/bin/activate
+(test) $
+</code></pre>
+</div>
+
+<p>What activate does?</p>
+
+<ul>
+  <li>Changes PS1 prompt to indicate the actve virtualenv.</li>
+  <li>Saves current environmental variables like PATH</li>
+  <li>Change PATH environment variable. bin directory inside the virtualenv is prefixed to PATH variable. So when you run python command, python interpreter in the bin folder of the virtualenv is invoked.</li>
+  <li>sys.path variable is changed to search for modules inside virtualenv first.</li>
+</ul>
+
+<p>On unix or mac, you can run <code class="highlighter-rouge">which python</code> to check which python interpreter is being used.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>(test) $ which python 
+/Users/vshashank/dev/.virtualenvs/test/bin/python
+</code></pre>
+</div>
+
+<p>You can see that we are using python interpreter installed in bin folder of our virtual environment. 
+If you install new third party packages using pip, they will be installed in the site-packages of current virtualenv.</p>
+
+<p>To de-activate the virtual environment just type <code class="highlighter-rouge">deactivate</code>. deactivate will restore the old environment by changing the PS1, PATH etc back to defualts.</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>Now that you understand how virtualenv works. Let’s summarize with an example of usual workflow. 
+I want to start a new python project called spark. I usually have all my projects under $HOME/dev/ directory.</p>
+
+<p>First I’d create a virtualenv for my new python project in .virtualenvs directory. Then create a directory called spark under $HOME/dev directory for the actual python code. Then activate the virtualenv before working on my new project.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ virtualenv spark
+New python executable in /Users/vshashank/.virtualenvs/spark/bin/python I   Installing setuptools, pip, wheel...done.
+vshashank-mba:~ vshashank$ . .virtualenvs/spark/bin/activate
+(spark) $ cd dev
+(spark) $ mkdir spark
+(spark) $ python
+Python 2.7.10 (default, Dec 20 2016, 23:53:20)
+&gt;&gt;&gt;
+</code></pre>
+</div>
+
+<p>There is another cool tool called virtualenvwrapper which makes this workflow slightly more convinient.</p>
+
+
+    </div>
+</div>
+<div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+        this.page.url = 'http://localhost:4000/blog/virtulal-env';
+        this.page.identifier = 'http://localhost:4000/blog/virtulal-env';
+    };
+(function() {
+ var d = document, s = d.createElement('script');
+ s.src = 'https://shashankv.disqus.com/embed.js';
+ s.setAttribute('data-timestamp', +new Date());
+ (d.head || d.body).appendChild(s);
+ })();
+    </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+</div>
+
+    </div>
+
+</body>
+
+</html>
